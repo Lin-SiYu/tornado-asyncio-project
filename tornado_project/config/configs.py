@@ -12,3 +12,10 @@ LOG_ROTATE_DAY = 7
 
 MONGO_URI = 'mongodb://localhost:27017'
 MONGO_DB = 'test'
+
+SQL_HOST = 'localhost'
+SQL_POST = 3306
+SQL_USER = 'test'
+SQL_PWD = 'test123'
+SQL_MAX_CONN = 10
+SQL_DB_NAME = 'test'
