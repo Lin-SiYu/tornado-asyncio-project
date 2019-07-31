@@ -1,5 +1,7 @@
+from tornado.ioloop import IOLoop
 from tornado.web import Application
 
+from tornado_project.common_utilities.redis.redis_base import RedisHandler
 from tornado_project.common_utilities.sql.sql_base import MySQLHandler
 from .routers import url_patterns
 from .common_utilities.log.loggers import log_function
@@ -10,7 +12,7 @@ from .common_utilities.mongo.mongo_base import MongodbHandler
 def make_app(cookie_secret, debug):
     mongo = MongodbHandler()
     sql = MySQLHandler()
-
+    redis = IOLoop.current().run_sync(RedisHandler.init).get_conn()
     app = Application(
         handlers=url_patterns,
         cookie_secret=cookie_secret,
@@ -18,5 +20,6 @@ def make_app(cookie_secret, debug):
         debug=debug,
         mongo=mongo,
         sql=sql,
+        redis=redis
     )
     return app

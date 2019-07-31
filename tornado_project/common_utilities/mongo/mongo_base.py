@@ -14,7 +14,7 @@ class MongodbHandler(object):
                 db = options['MONGO_DB']
             self.db = self.client[db]
         except AttributeError as e:
-            logger_error.error('AttributeError:%s' % e)
+            logger_error.error('AttributeError - %s' % e)
 
     async def do_find_one(self, doc_name, filter=None, *args, **kwargs):
         return await self.db[doc_name].find_one(filter, *args, **kwargs)

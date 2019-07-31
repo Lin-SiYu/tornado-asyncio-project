@@ -1,6 +1,7 @@
 import peewee_async
 from tornado.options import options
 
+
 class MySQLHandler:
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, "_instance"):

@@ -24,7 +24,6 @@ def parse_config_file(path):
 def parse_options():
     _root = os.getcwd()
     _settings = os.path.join(_root, "config", "configs.py")
-    print(_settings)
     try:
         parse_config_file(_settings)
         logging.info("Using settings.py as default settings.")

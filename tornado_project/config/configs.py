@@ -19,3 +19,6 @@ SQL_USER = 'test'
 SQL_PWD = 'test123'
 SQL_MAX_CONN = 10
 SQL_DB_NAME = 'test'
+
+REDIS_URL = 'redis://localhost/'
+REDIS_DB = 10
