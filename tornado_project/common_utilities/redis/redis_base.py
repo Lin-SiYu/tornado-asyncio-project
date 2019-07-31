@@ -1,8 +1,13 @@
 import aioredis as aioredis
+from tornado.ioloop import IOLoop
 from tornado.options import options
 
 
 class RedisHandler:
+    def __new__(cls, *args, **kwargs):
+        IOLoop.current().run_sync(cls.init)
+        return super().__new__(cls)
+
     @classmethod
     async def connection(cls):
         option_data = options.as_dict()
