@@ -1,4 +1,4 @@
-import aioredis as aioredis
+import aioredis
 from tornado.options import options
 
 
