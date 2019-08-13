@@ -8,6 +8,9 @@ class RedisAPIHandler(APIHandler):
         # async 方法内实例化对象
         # re = await RedisHandler.init()
         # print(re)
+        # 使用__init__方法实例化，非单例
+        re = RedisHandler()
+        print(re)
         conn = self.settings['redis'].get_conn()
         val = await conn.set('xxx', 123)
         # get_val = await conn..get('xxx')

@@ -12,7 +12,8 @@ from .common_utilities.mongo.mongo_base import MongodbHandler
 def make_app(cookie_secret, debug):
     mongo = MongodbHandler()
     sql = MySQLHandler()
-    redis = IOLoop.current().run_sync(RedisHandler.init)
+    # redis = IOLoop.current().run_sync(RedisHandler.init)
+    redis = RedisHandler()
     app = Application(
         handlers=url_patterns,
         cookie_secret=cookie_secret,
