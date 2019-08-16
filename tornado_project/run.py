@@ -8,7 +8,9 @@ from tornado.ioloop import IOLoop
 from tornado.options import options
 
 from tornado_project.common_utilities.log import init_log, logger_info
+from tornado_project.common_utilities.rabbit_mq.consumer import consumer
 from tornado_project.config import parse_options
+from tornado_project.mq_consumer_register import register
 
 
 class Main:
@@ -30,6 +32,10 @@ class Main:
         init_log()
 
         self._get_loop()
+        from tornado_project.common_utilities.heartbeat import heartbeat
+        self.loop.call_later(0.5, heartbeat.ticker, app=self.app)
+        self.loop.run_sync(self.app.mq.connect)
+        self._init_subscribe()
 
     def start_server(self):
         http_server = httpserver.HTTPServer(self.app)
@@ -70,6 +76,16 @@ class Main:
         # signal.signal(signal.SIGQUIT, stop_handler)
         signal.signal(signal.SIGTERM, stop_handler)
         signal.signal(signal.SIGINT, stop_handler)
+
+    def _init_subscribe(self):
+        '''
+        MQ 消费者，初始化队列+监听
+        :return:
+        '''
+        self.loop.run_sync(register)
+        for data_dict in consumer.subscribers:
+            self.loop.add_callback(self.app.mq.consumer, **data_dict)
+            self.loop.add_callback(self.app.mq.subscribe, **data_dict)
 
 
 if __name__ == '__main__':

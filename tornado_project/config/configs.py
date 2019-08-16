@@ -22,3 +22,17 @@ SQL_DB_NAME = 'test'
 
 REDIS_URL = 'redis://localhost/'
 REDIS_DB = 10
+
+MQ_HOST = '127.0.0.1'
+MQ_PORT = 5672
+MQ_USER = 'test'
+MQ_PWD = '123'
+
+HEARTBEAT_INTERVAL = 30
+HEARTBEAT_BROADCAST = 30
+
+EXCHANGES_DICT = {
+    'fanout': ('Heartbeat',),
+    'topic': ('MyTestExchange', 'My'),
+    'direct': ()
+}

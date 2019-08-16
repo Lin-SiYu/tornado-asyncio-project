@@ -1,6 +1,7 @@
 from tornado.ioloop import IOLoop
 from tornado.web import Application
 
+from tornado_project.common_utilities.rabbit_mq.mq_base import MqBase
 from tornado_project.common_utilities.redis.redis_base import RedisHandler
 from tornado_project.common_utilities.sql.sql_base import MySQLHandler
 from .routers import url_patterns
@@ -23,4 +24,5 @@ def make_app(cookie_secret, debug):
         sql=sql,
         redis=redis
     )
+    app.mq = MqBase()
     return app
