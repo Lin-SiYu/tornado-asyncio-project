@@ -1,7 +1,6 @@
 # tornado-asyncio-project
 a tornado project focus on asyncio
 
-[TOC]
 
 # 一、HeartBeat
 
@@ -40,7 +39,7 @@ HEARTBEAT_BROADCAST = 30
   - async def **publish** - 生产者广播，将 msg 广播至指定的exchange
   - async def **consumer** - 消费者，初始化 queue，绑定指定 exchange
   - async def **subscribe** - 消费者订阅，订阅指定 queue，并回调 函数（必须为异步函数）
-  - **！！！注意！！！**类下所有函数，exchange_name、exchange_type、queue_name 相关参数，**切勿使用None作为空传入**
+  - **！！！注意！！** 类下所有函数，exchange_name、exchange_type、queue_name 相关参数，**切勿使用None作为空传入**
 - **MQConsumer** - 给需要订阅操作的消费者，提供注册方法。
   - async def **register** - 将需要订阅的消费者 append 入类内列表，用于后续调用执行
   - **MQConsumer.subscribers** - 查询消费者注册列表（用于订阅对象查询）
