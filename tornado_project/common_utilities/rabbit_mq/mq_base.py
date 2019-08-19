@@ -2,6 +2,7 @@ import asyncio
 import json
 
 import aioamqp
+from aioamqp import SynchronizationError
 from tornado.options import options
 
 from tornado_project.common_utilities.heartbeat import heartbeat
@@ -98,7 +99,10 @@ class MqBase:
         e消费者初始化queue，绑定指定exchang
         :return:
         '''
-        await self._channel.queue_declare(queue_name=queue_name, auto_delete=True)
+        try:
+            await self._channel.queue_declare(queue_name=queue_name, auto_delete=True)
+        except SynchronizationError as e:
+            pass
         await self._channel.queue_bind(queue_name=queue_name, exchange_name=exchange_name,
                                        routing_key=routing_key)
         await self._channel.basic_qos(prefetch_count=prefetch_count)

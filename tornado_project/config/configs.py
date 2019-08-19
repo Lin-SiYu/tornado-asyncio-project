@@ -33,6 +33,6 @@ HEARTBEAT_BROADCAST = 30
 
 EXCHANGES_DICT = {
     'fanout': ('Heartbeat',),
-    'topic': ('MyTestExchange', 'My'),
+    'topic': ('MyTestExchange', 'Mongodb'),
     'direct': ()
 }

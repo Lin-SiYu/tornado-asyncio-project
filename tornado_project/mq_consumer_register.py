@@ -8,6 +8,8 @@ async def register():
     ！注意！：需保证exchange存在
     '''
     # 提供 Asynchronous callback，自定义queue_name,已存在的exchange_name
-    # await consumer.register(heartbeat_example, 'heartbeat_test', 'Heartbeat')
+    await consumer.register(heartbeat_example, 'heartbeat_test', 'Heartbeat')
     # await consumer.register(MongodbWatchMiddleware().publish, 'mongo_watch', 'Mongodb')
+    await consumer.register(heartbeat_example, 'mongo.watch', 'Mongodb', routing_key='*.watch')
+    await consumer.register(heartbeat_example, 'mongo.watch', 'Mongodb', routing_key='mongo.#')
     # pass
