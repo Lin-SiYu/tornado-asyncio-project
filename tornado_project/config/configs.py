@@ -32,7 +32,13 @@ HEARTBEAT_INTERVAL = 30
 HEARTBEAT_BROADCAST = 30
 
 EXCHANGES_DICT = {
-    'fanout': ('Heartbeat',),
-    'topic': ('MyTestExchange', 'Mongodb'),
-    'direct': ()
+    'fanout': ['Heartbeat', 'Example'],
+    'topic': [],
+    'direct': []
 }
+MIDDLEWARE_LIST = [
+    # 'lib.middleware.pingmiddle.PingMiddleware'
+    'common_utilities.middleware.example_middle.ExampleMiddleware'
+]
+# 用于给 ws 连接用户发送 ping，确认连接,若不配置，则不发送
+# BEAT_PING_INTERVAL = 30
