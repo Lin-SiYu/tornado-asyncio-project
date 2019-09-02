@@ -7,16 +7,16 @@ from ..middleware import WS_CONNECT_USER_INFOS as user_infos
 class ExampleMiddleware(WSMiddleware):
     def process_open(self, ws):
         # ！！注意，下方字典不可为空(若初始为字典)
-        user_infos['ExampleMiddleware'][self] = dict(meaningless=0)
+        user_infos['ExampleMiddleware'][ws] = dict(meaningless=0)
 
     def process_message(self, ws):
         # todo 前端发送的数据处理
         pass
 
     def process_close(self, ws):
-        if user_infos['ExampleMiddleware'].get(self):
+        if user_infos['ExampleMiddleware'].get(ws):
             # 若非自然断开连接，则删除字典内信息
-            user_infos['ExampleMiddleware'].pop(self)
+            user_infos['ExampleMiddleware'].pop(ws)
 
     async def publish(self, channel, body, envelope, properties):
         # todo 监听 mq 的数据处理,推送连接的用户

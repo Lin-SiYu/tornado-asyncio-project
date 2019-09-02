@@ -88,6 +88,5 @@ class Main:
             self.loop.add_callback(self.app.mq.subscribe, **data_dict)
 
 
-
 if __name__ == '__main__':
     Main().start_server()

@@ -11,7 +11,7 @@ from ..middleware import WS_CONNECT_USER_INFOS as user_infos
 class WSMiddleware:
     '''
     process_open、process_message、process_close
-    三者参数，self = ws = <app.handlers.ws_handlers.MarketPairHandler object at 0x000001F16AE0DCF8>
+    ws = <app.handlers.ws_handlers.MarketPairHandler object at 0x000001F16AE0DCF8>
     '''
 
     def process_open(self, ws):
@@ -25,43 +25,50 @@ class WSMiddleware:
 
 
 class WSMiddle(WebSocketHandler):
+    _open_middleware = []
+    _message_middleware = []
+    _close_middleware = []
+
     def open(self):
         logger_info.info('%s - WSMiddle opened success!' % self)
-        try:
-            self.middleware_list
-        except AttributeError:
-            self.middleware_list = options.MIDDLEWARE_LIST
-
-        # 初始化放置用户信息的字典，添加对应的类
-        for middleware in self.middleware_list:
-            mpath, mclass = middleware.rsplit('.', maxsplit=1)
-            if not mclass in user_infos:
-                user_infos[mclass] = {}
-
-        self._middle_list_handle('process_open')
+        self._middle_list_handle()
+        for open_func in self._open_middleware:
+            open_func(self)
 
     def on_message(self, message):
-        # print("WSMiddle on_message")
         self.message = message
-        self._middle_list_handle('process_message')
+        for msg_func in self._message_middleware:
+            msg_func(self)
         self.msg_handle(message)
 
     def msg_handle(self, message):
         pass
 
     def on_close(self):
-        # print("WSMiddle closed")
         logger_info.info('%s - WSMiddle closed !' % self)
-        self._middle_list_handle('process_close')
+        for close_func in self._close_middleware:
+            close_func(self)
 
-    def _middle_list_handle(self, process_func_name):
+    def _middle_list_handle(self):
+        try:
+            self.middleware_list
+        except AttributeError:
+            self.middleware_list = options.MIDDLEWARE_LIST
+
         for middleware in self.middleware_list:
             mpath, mclass = middleware.rsplit('.', maxsplit=1)
+            # 初始化放置用户信息的字典，添加对应的类
+            if not mclass in user_infos:
+                user_infos[mclass] = {}
             mod = importlib.import_module(mpath)
-            # getattr(mod, mclass).process_open(self, self)
             cla_obj = getattr(mod, mclass)
-            func = getattr(cla_obj, process_func_name)
-            func(self, self)
+            mw_instance = cla_obj()
+            if hasattr(mw_instance, 'process_open'):
+                self._open_middleware.append(mw_instance.process_open)
+            if hasattr(mw_instance, 'process_message'):
+                self._message_middleware.append(mw_instance.process_message)
+            if hasattr(mw_instance, 'process_close'):
+                self._close_middleware.append(mw_instance.process_close)
 
     # 允许所有跨域通讯，解决403问题
     def check_origin(self, origin):

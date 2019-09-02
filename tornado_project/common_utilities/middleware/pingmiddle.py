@@ -15,7 +15,7 @@ class PingMiddleware(WSMiddleware):
 
     def process_open(self, ws):
         # print('PingMiddleware - open')
-        user_infos['PingMiddleware'][self] = dict(
+        user_infos['PingMiddleware'][ws] = dict(
             count=0,
             ping=None,
         )
@@ -25,14 +25,14 @@ class PingMiddleware(WSMiddleware):
         # print('PingMiddleware - message')
         logger_info.info('Ping Middleware handle message')
         msg = json.loads(ws.message)
-        user_dic = user_infos['PingMiddleware'].get(self)
+        user_dic = user_infos['PingMiddleware'].get(ws)
         # 若pong满足条件，即重置对应user_times
         if 'pong' in msg:
             if user_dic and user_dic['ping'] == msg['pong']:
-                user_infos['PingMiddleware'][self]['count'] = 0
+                user_infos['PingMiddleware'][ws]['count'] = 0
 
-    def process_close(self, *args, **kwargs):
+    def process_close(self,ws, *args, **kwargs):
         # print('PingMiddleware - close')
-        if user_infos['PingMiddleware'].get(self):
+        if user_infos['PingMiddleware'].get(ws):
             # 若非自然断开连接，则删除字典内信息
-            user_infos['PingMiddleware'].pop(self)
+            user_infos['PingMiddleware'].pop(ws)
