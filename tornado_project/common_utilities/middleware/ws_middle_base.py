@@ -56,19 +56,29 @@ class WSMiddle(WebSocketHandler):
             self.middleware_list = options.MIDDLEWARE_LIST
 
         for middleware in self.middleware_list:
-            mpath, mclass = middleware.rsplit('.', maxsplit=1)
+            try:
+                mpath, mclass = middleware.rsplit('.', maxsplit=1)
+            except ValueError as err:
+                raise ImportError("%s doesn't look like a module path" % middleware) from err
+
             # 初始化放置用户信息的字典，添加对应的类
             if not mclass in user_infos:
                 user_infos[mclass] = {}
+
             mod = importlib.import_module(mpath)
-            cla_obj = getattr(mod, mclass)
-            mw_instance = cla_obj()
-            if hasattr(mw_instance, 'process_open'):
-                self._open_middleware.append(mw_instance.process_open)
-            if hasattr(mw_instance, 'process_message'):
-                self._message_middleware.append(mw_instance.process_message)
-            if hasattr(mw_instance, 'process_close'):
-                self._close_middleware.append(mw_instance.process_close)
+            try:
+                cla_obj = getattr(mod, mclass)
+                mw_instance = cla_obj()
+                if hasattr(mw_instance, 'process_open'):
+                    self._open_middleware.append(mw_instance.process_open)
+                if hasattr(mw_instance, 'process_message'):
+                    self._message_middleware.append(mw_instance.process_message)
+                if hasattr(mw_instance, 'process_close'):
+                    self._close_middleware.append(mw_instance.process_close)
+            except AttributeError as err:
+                raise ImportError('Module "%s" does not define a "%s" attribute/class' % (
+                    mpath, mclass)
+                                  ) from err
 
     # 允许所有跨域通讯，解决403问题
     def check_origin(self, origin):
