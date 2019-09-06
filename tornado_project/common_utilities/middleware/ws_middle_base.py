@@ -34,6 +34,10 @@ class WSMiddle(WebSocketHandler):
         self._middle_list_handle()
         for open_func in self._open_middleware:
             open_func(self)
+        self.open_handle()
+
+    def open_handle(self):
+        pass
 
     def on_message(self, message):
         self.message = message
@@ -48,10 +52,14 @@ class WSMiddle(WebSocketHandler):
         logger_info.info('%s - WSMiddle closed !' % self)
         for close_func in self._close_middleware:
             close_func(self)
+        self.close_handle()
+
+    def close_handle(self):
+        pass
 
     def _middle_list_handle(self):
         try:
-            self.middleware_list
+            self.middleware_list = list(set(options.MIDDLEWARE_LIST) | set(self.middleware_list))
         except AttributeError:
             self.middleware_list = options.MIDDLEWARE_LIST
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tornado WebSocket Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.10/pako.js"></script>
+</head>
+<body>
+<body onload='onLoad();'>
+Message to send: <input type="text" id="msg"/>
+<input type="button" onclick="sendMsg();" value="发送"/>
+</body>
+</body>
+
+<script type="text/javascript">
+    var ws;
+    // 模拟用户star选择，在open时进行传输
+    var star_data = {"star_data": {"category': 0, "star_list": []}};
+    star_json = JSON.stringify(star_data);
+
+
+    // 页面加载自动与WS建立连接，并将msg处理绑定函数
+    function onLoad() {
+        ws = new WebSocket("ws://localhost:8000/v1/ws/example");
+
+        ws.onmessage = function (MessageEvent) {
+            // console.log(MessageEvent)
+            // data 数据为Blob类型，需要解压
+            // console.log(MessageEvent.data)
+
+            // 若是ws返回的数据解压处理
+            if (MessageEvent.data instanceof Blob) {
+                let result = '';
+                let reader = new FileReader();
+                reader.onloadend = function (e) {
+                    result = pako.inflate(reader.result, {to: 'string'});
+                    console.log(result);
+                    // ping-pong 处理逻辑
+                    result = JSON.parse(result);
+                    if ('ping' in result) {
+                        console.log(result.ping);
+                        let pong = {'pong': result.ping};
+                        ws.send(JSON.stringify(pong))
+                    }
+
+                };
+                reader.readAsBinaryString(MessageEvent.data);
+            }
+            // 请求返回数据，直接显示
+            else {
+                console.log(MessageEvent.data)
+            }
+
+        };
+
+        ws.onopen = function () {
+            ws.send(star_json);
+        };
+
+    }
+
+    //手动发送数据，触发后端的msg处理，会先被 middleware 处理
+    function sendMsg() {
+        // 发送json格式字符串可更改client存储信息
+        var data = document.getElementById('msg').value;
+        ws.send(data);
+    }
+
+</script>
+
+</html>
