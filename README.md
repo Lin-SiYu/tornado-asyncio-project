@@ -51,9 +51,9 @@ HEARTBEAT_BROADCAST = 30
    ```python
    # config.py
    EXCHANGES_DICT = {
-       'fanout': ('Heartbeat',),
-       'topic': ('MyTestExchange',),
-       'direct': ()
+       'fanout': ['Heartbeat','Example'],
+       'topic': ['MyTestExchange',],
+       'direct': []
    }
    ```
 
