@@ -1,7 +1,7 @@
 import json
 
 from tornado_project.common_utilities.log import logger_info
-from tornado_project.common_utilities.middleware.ws_middle_base import WSMiddleware
+from tornado_project.common_utilities.ws_base import WSMiddleware
 from ..middleware import WS_CONNECT_USER_INFOS as user_infos
 
 
@@ -19,7 +19,7 @@ class PingMiddleware(WSMiddleware):
             count=0,
             ping=None,
         )
-        print(user_infos)
+        # print(user_infos)
 
     def process_message(self, ws):
         # print('PingMiddleware - message')

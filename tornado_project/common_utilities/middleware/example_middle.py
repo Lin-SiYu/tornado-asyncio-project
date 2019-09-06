@@ -1,6 +1,6 @@
 import gzip
 
-from tornado_project.common_utilities.middleware.ws_middle_base import WSMiddleware
+from tornado_project.common_utilities.ws_base import WSMiddleware
 from ..middleware import WS_CONNECT_USER_INFOS as user_infos
 
 

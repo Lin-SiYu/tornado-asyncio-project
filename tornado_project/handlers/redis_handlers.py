@@ -10,7 +10,7 @@ class RedisAPIHandler(APIHandler):
         # print(re)
         # 使用__init__方法实例化，非单例
         re = RedisHandler()
-        print(re)
+        # print(re)
         conn = self.settings['redis'].get_conn()
         val = await conn.set('xxx', 123)
         # get_val = await conn..get('xxx')

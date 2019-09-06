@@ -1,17 +1,38 @@
 import importlib
-import json
 
 from tornado.options import options
 from tornado.websocket import WebSocketHandler
 
-from tornado_project.common_utilities.log import logger_info
-from ..middleware import WS_CONNECT_USER_INFOS as user_infos
+from tornado_project.common_utilities.middleware import WS_CONNECT_USER_INFOS as user_infos
+from tornado_project.common_utilities.tools import get_gzip
 
 
-class WSMiddleware:
+class WSResponseHandler(object):
+
+    @staticmethod
+    def return_result(message, code, data):
+        result = {
+            "code": code,
+            "msg": message,
+            "data": data
+        }
+
+        return get_gzip(result)
+
+    @staticmethod
+    def success_result(data):
+        result = {
+            "code": 200,
+            "msg": 'ok',
+            "data": data
+        }
+        return get_gzip(result)
+
+
+class WSMiddleware(WSResponseHandler):
     '''
     process_open、process_message、process_close
-    ws = <app.handlers.ws_handlers.MarketPairHandler object at 0x000001F16AE0DCF8>
+    三者参数，ws = <app.handlers.ws_handlers.MarketPairHandler object at 0x000001F16AE0DCF8>
     '''
 
     def process_open(self, ws):
@@ -24,13 +45,12 @@ class WSMiddleware:
         pass
 
 
-class WSMiddle(WebSocketHandler):
+class WSHandler(WebSocketHandler, WSResponseHandler):
     _open_middleware = []
     _message_middleware = []
     _close_middleware = []
 
     def open(self):
-        logger_info.info('%s - WSMiddle opened success!' % self)
         self._middle_list_handle()
         for open_func in self._open_middleware:
             open_func(self)
@@ -49,7 +69,6 @@ class WSMiddle(WebSocketHandler):
         pass
 
     def on_close(self):
-        logger_info.info('%s - WSMiddle closed !' % self)
         for close_func in self._close_middleware:
             close_func(self)
         self.close_handle()
@@ -91,11 +110,3 @@ class WSMiddle(WebSocketHandler):
     # 允许所有跨域通讯，解决403问题
     def check_origin(self, origin):
         return True
-
-    def success_json(self, data, msg='ok'):
-        res = dict(
-            status='200',
-            msg=msg,
-            data=data
-        )
-        return json.dumps(res)

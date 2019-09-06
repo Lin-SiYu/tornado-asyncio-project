@@ -1,7 +1,7 @@
-from tornado_project.common_utilities.middleware.ws_middle_base import WSMiddle
+from tornado_project.common_utilities.ws_base import WSHandler
 
 
-class ExampleHandler(WSMiddle):
+class ExampleHandler(WSHandler):
     # 局部列表是在全局列表的叠加而不是覆盖
     # middleware_list = ['lib.middleware.pingmiddle.PingMiddleware']
     def open_handle(self):
