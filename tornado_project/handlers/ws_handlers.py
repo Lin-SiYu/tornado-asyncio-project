@@ -14,3 +14,9 @@ class ExampleHandler(WSHandler):
     def close_handle(self):
         # 在middleware执行后执行该方法，连接关闭时调用
         pass
+
+    # with async using
+    # async def open_handle(self):
+    #     pass
+    # async def msg_handle(self, message):
+    #     print(message)

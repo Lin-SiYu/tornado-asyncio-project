@@ -29,7 +29,7 @@ def on_open(ws):
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("ws://localhost:8000/v1/ws/example",
+    ws = websocket.WebSocketApp("ws://localhost:8080/v1/ws/quiz",
                                 on_message=on_message,
                                 on_open=on_open,
                                 on_error=on_error,

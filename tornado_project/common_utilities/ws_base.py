@@ -1,9 +1,10 @@
 import importlib
+import inspect
 
 from tornado.options import options
 from tornado.websocket import WebSocketHandler
 
-from tornado_project.common_utilities.middleware import WS_CONNECT_USER_INFOS as user_infos
+from tornado_project.common_utilities.middleware import WEBSOCKET_CLIENT as ws_clients
 from tornado_project.common_utilities.tools import get_gzip
 
 
@@ -50,20 +51,29 @@ class WSHandler(WebSocketHandler, WSResponseHandler):
     _message_middleware = []
     _close_middleware = []
 
-    def open(self):
+    async def open(self):
+        # create ws client space for every websocket handler
+        if self.__class__.__name__ not in ws_clients:
+            ws_clients[self.__class__.__name__] = {}
         self._middle_list_handle()
         for open_func in self._open_middleware:
             open_func(self)
-        self.open_handle()
+        if inspect.iscoroutinefunction(self.open_handle):
+            await self.open_handle()
+        else:
+            self.open_handle()
 
     def open_handle(self):
         pass
 
-    def on_message(self, message):
+    async def on_message(self, message):
         self.message = message
         for msg_func in self._message_middleware:
             msg_func(self)
-        self.msg_handle(message)
+        if inspect.iscoroutinefunction(self.msg_handle):
+            await self.msg_handle(message)
+        else:
+            self.msg_handle(message)
 
     def msg_handle(self, message):
         pass
@@ -88,9 +98,9 @@ class WSHandler(WebSocketHandler, WSResponseHandler):
             except ValueError as err:
                 raise ImportError("%s doesn't look like a module path" % middleware) from err
 
-            # 初始化放置用户信息的字典，添加对应的类
-            if not mclass in user_infos:
-                user_infos[mclass] = {}
+            # create ws client space for every middleware
+            if not mclass in ws_clients:
+                ws_clients[mclass] = {}
 
             mod = importlib.import_module(mpath)
             try:
@@ -110,3 +120,10 @@ class WSHandler(WebSocketHandler, WSResponseHandler):
     # 允许所有跨域通讯，解决403问题
     def check_origin(self, origin):
         return True
+
+    @property
+    def handler_info(self):
+        return ws_clients[self.__class__.__name__]
+
+    def set_handler_info(self, key, value):
+        ws_clients[self.__class__.__name__][key] = value

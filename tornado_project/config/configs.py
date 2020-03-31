@@ -21,7 +21,7 @@ SQL_MAX_CONN = 10
 SQL_DB_NAME = 'test'
 
 REDIS_URL = 'redis://localhost/'
-REDIS_DB = 10
+REDIS_DB = 1
 
 MQ_HOST = '127.0.0.1'
 MQ_PORT = 5672
@@ -38,7 +38,7 @@ EXCHANGES_DICT = {
 }
 MIDDLEWARE_LIST = [
     # 'lib.middleware.pingmiddle.PingMiddleware'
-    'common_utilities.middleware.example_middle.ExampleMiddleware'
+    # 'common_utilities.middleware.example_middle.ExampleMiddleware'
 ]
 # 用于给 ws 连接用户发送 ping，确认连接,若不配置，则不发送
 # BEAT_PING_INTERVAL = 30

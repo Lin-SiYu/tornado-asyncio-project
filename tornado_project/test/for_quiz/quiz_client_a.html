@@ -15,7 +15,7 @@ Message to send: <input type="text" id="msg"/>
 <script type="text/javascript">
     var ws;
     // 模拟用户star选择，在open时进行传输
-    var star_data = {"category": 0, "star_list": []};
+    var star_data = {"operate": "match", "user_id":1};
     var star_json = JSON.stringify(star_data);
 
     // 页面加载自动与WS建立连接，并将msg处理绑定函数
