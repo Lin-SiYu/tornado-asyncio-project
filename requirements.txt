@@ -4,7 +4,7 @@ aioredis==1.2.0
 asn1crypto==0.24.0
 async-timeout==3.0.1
 cffi==1.12.3
-cryptography==2.7
+cryptography==3.2
 hiredis==1.0.0
 motor==2.0.0
 pamqp==2.3.0
